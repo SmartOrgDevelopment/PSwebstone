@@ -1,0 +1,3 @@
+go
+DateTime,credentials,sequenceNumber,activityState,userID,username,sessionID,Month,MonthName,Day,DayOfWeek,Hour,Minute,Second,source 
+"7/15/2012 2:05:16 PM","Index was outside the bounds of the array.",-666,"unknown state[-666]",-666,"Index was outside the bounds of the array.","Index was outside the bounds of the array.",7,"July",15,"Sunday",14,5,16,"Index was outside the bounds of the array." 
