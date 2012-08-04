@@ -4,26 +4,24 @@ workflow Invoke-PTask2 {
 	
 	foreach -parallel ($counter in $counters)
 	{
-		$m = inner-function
-        $babu = Get-TheWebData $counter
+	    $m = inner-function
+            $babu = Get-TheWebData $counter
 
-		InlineScript{
-		
-			#how to do this in a more functional way?
+	   InlineScript{
+
+            #how to do this in a more functional way?
             #this is clearly procedural
             $r = new-object Random
             $random = $r.Next(1,10)
-
             $_url = "$using:counter"
             $_host = "astro-dev.smartorg.com"
-			
-			$root = 'C:\data\dev\PSwebstone'
+            $root = 'C:\data\dev\PSwebstone'
             [System.Reflection.Assembly]::LoadFrom("$root\core\dll\UDPcommunications.dll") | Out-Null
 
-			$ip = '127.0.0.1'
-			$port = 7700
-			$talker = new-object UDPcommunications.talker($ip,$port)
-			$timestamp = get-date -uformat "%Y-%m-%d~%H-%M-%S"
+            $ip = '127.0.0.1'
+            $port = 7700
+            $talker = new-object UDPcommunications.talker($ip,$port)
+            $timestamp = get-date -uformat "%Y-%m-%d~%H-%M-%S"
             $message = "BEGIN $random"
             $talker.send("$timestamp >> $message")
             $valFromInnerFxn = "$using:m"
@@ -38,17 +36,14 @@ workflow Invoke-PTask2 {
             #simulate long running task
             Start-Sleep $random
 
-			#trace out result via udp broadcast ...
-			$talker.send("$timestamp >> $message")
-		}	
-			
+            #trace out result via udp broadcast ...
+            $talker.send("$timestamp >> $message")
+		}				
 	}
 	
 	
 	function inner-function{
-	
 		"boo"
-		
 	}
 
    
@@ -61,11 +56,6 @@ workflow Invoke-PTask2 {
     $url
 
     }
-
-
-	
-	
-	
 }
 
 
@@ -74,11 +64,19 @@ workflow Invoke-PTask2 {
 
 function Test-Parallel{
 
-    cd "c:\data\dev\PSwebstone\core\"
+	param([int]$numberTests = 10)
 
-	$counters  = 'www.physicalsymmetry.com','www.smartorg.com','www.agentidea.com','www.weezer141.com'
-    Clear-Host
-    
+	cd "c:\data\dev\PSwebstone\core\"
+	if($numberTests -LT 1)
+	{
+		Write-Host "number of tests expected should be a positive number greater than zero"-backgroundColor DarkRed
+		return "FAIL"
+	}
+	$counters = @()
+	1..$numberTests | % { $counters += $_ }
+	
+	Clear-Host
 	Invoke-PTask2 $counters #-AsJob
-
+	
+	
 }
